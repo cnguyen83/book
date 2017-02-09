@@ -1,23 +1,42 @@
-## Traits
+## Traits: Defining Shared Behavior
 
-*Traits* are similar to a feature often called 'interfaces' in other languages,
-but are also different. Traits let us do another kind of abstraction: they let
-us abstract over *behavior* that types can have in common.
+Traits allow us another kind of abstraction: they let us abstract over behavior
+that types can have in common. A *trait* tells the Rust compiler about
+functionality a particular type has and might share with other types. In
+situations where we use generic type parameters, we can use *trait bounds* to
+specify, at compile time, that the generic type may be any type that implements
+a trait and therefore has the behavior we want to use in that situation.
 
-When we use a generic type parameter, we are telling Rust that any type is
-valid in that location. When other code *uses* a value that could be of any
-type, we need to also tell Rust that the type has the functionality that we
-need. Traits let us specify that, for example, we need any type `T` that has
-methods defined on it that allow us to print a value of that type. This is
-powerful because we can still leave our definitions generic to allow use of
-many different types, but we can constrain the type at compile-time to types
-that have the behavior we need to be able to use.
+> Note: *Traits* are similar to a feature often called 'interfaces' in other
+> languages, though with some differences.
 
-Listing 10-5 has an example definition of a trait named `Printable` with a
-method named `print`:
+### Defining a Trait
 
-<figure>
-<span class="filename">Filename: src/lib.rs</span>
+### Implementing a Trait on a Type
+
+### Trait Bounds
+
+<!-- Return to the example of the `largest` function here and discuss how using
+`<` in the function body means we need to use `T: PartialOrd`. Then maybe show
+how to implement `PartialOrd` for a struct? Throw a `clone` in to get around
+needing to specify `Copy` too, maybe, or just specify `Copy` and then either
+getting rid of `Copy` or `clone` could segue into lifetimes? /Carol -->
+
+
+
+
+
+<!-- Not rearranged yet from here to the end /Carol -->
+
+
+
+
+
+
+Here's an example definition of a trait named `Printable` that has a method
+named `print`:
+
+Filename: src/lib.rs
 
 ```rust
 trait Printable {
@@ -25,35 +44,30 @@ trait Printable {
 }
 ```
 
-<figcaption>
-
-Listing 10-5: A `Printable` trait definition with one method, `print`
-
-</figcaption>
-</figure>
+Listing 10-7: A `Printable` trait definition with one method, `print`
 
 We declare a trait with the `trait` keyword, then the trait's name. In this
-case, our trait will describe types which can be printed. Inside of curly
-braces, we declare a method signature, but instead of providing an
-implementation inside curly braces, we put a semicolon after the signature. A
-trait can have multiple methods in its body, with the method signatures listed
-one per line and each line ending in a semicolon.
+case, our trait will describe types that can be printed. Inside curly braces we
+declare a method signature, but instead of providing an implementation, we put
+a semicolon after the signature. A trait can have multiple methods in its body,
+with the method signatures listed one per line and each line ending in a
+semicolon. This has declared the trait `Printable`, defined as "methods that
+are able to print values".
 
-Implementing a trait for a particular type looks similar to implementing
-methods on a type since it's also done with the `impl` keyword, but we specify
-the trait name as well. Inside the `impl` block, we specify definitions for the
-trait's methods in the context of the specific type. Listing 10-6 has an
-example of implementing the `Printable` trait from Listing 10-5 (that only has
-the `print` method) for a `Temperature` enum:
+<!--Why do we do it like this, with the semicolon instead of
+implementation---is that what makes it generic? (above) I'm also still quite
+unclear on what a trait is/does -- I added this last line to try to wrap up
+what this Printable trait is for, but I'm not confident in that, can you please
+check and change? -->
 
-<figure>
-<span class="filename">Filename: src/lib.rs</span>
+Now we have the trait written we can implement it on a type. We use the `impl`
+keyword, and we must also specify the trait name. Listing 10-8 shows an example
+implementing the `Printable` trait from Listing 10-7 (that only has the `print`
+method) for a `Temperature` enum:
+
+Filename: src/lib.rs
 
 ```rust
-# trait Printable {
-#     fn print(&self);
-# }
-#
 enum Temperature {
     Celsius(i32),
     Fahrenheit(i32),
@@ -69,38 +83,26 @@ impl Printable for Temperature {
 }
 ```
 
-<figcaption>
+Listing 10-8: Implementing the `Printable` trait on a `Temperature` enum
 
-Listing 10-6: Implementing the `Printable` trait on a `Temperature` enum
+<!-- I think this code needs a little more talking through, point out what's
+new and what we're doing. For eg, where does `match` come in? -->
 
-</figcaption>
-</figure>
+Inside the `impl` block, we specify definitions for the trait's methods in the
+context of the specific type. In the same way `impl` lets us define methods,
+we've used it to define methods that pertain to our trait.
 
-In the same way `impl` lets us define methods, we've used it to define methods
-that pertain to our trait. We can call methods that our trait has defined just
-like we can call other methods:
+We can call methods that our trait has defined just like we can call other
+methods:
 
-<span class="filename">Filename: src/main.rs</span>
+<!--I'm afraid I'm still not clear on what this will actually do, the t.print
+command -- just print the value of t? And where is the trait brought into
+scope? I see the Temperature enum, but not the Printable trait. Perhaps a
+little more explanation after this example would help make this all clearer -->
+
+Filename: src/main.rs
 
 ```rust
-# trait Printable {
-#     fn print(&self);
-# }
-#
-# enum Temperature {
-#     Celsius(i32),
-#     Fahrenheit(i32),
-# }
-#
-# impl Printable for Temperature {
-#    fn print(&self) {
-#        match *self {
-#             Temperature::Celsius(val) => println!("{}°C", val),
-#             Temperature::Fahrenheit(val) => println!("{}°F", val),
-#         }
-#     }
-# }
-#
 fn main() {
     let t = Temperature::Celsius(37);
 
@@ -109,87 +111,72 @@ fn main() {
 ```
 
 Note that in order to use a trait's methods, the trait itself must be in scope.
-If the definition of `Printable` was in a module, the definition would need to
-be defined as `pub` and we would need to `use` the trait in the scope where we
-wanted to call the `print` method. This is because it's possible to have two
-traits that both define a method named `print`, and our `Temperature` enum might
-implement both. Rust wouldn't know which `print` method we wanted unless we
-brought the trait we wanted into our current scope with `use`.
+If the definition of `Printable` was in a module rather than within the same
+program, it would need to be defined as `pub` and we would need to `use` the
+trait in the scope where we wanted to call the `print` method. This is because
+it's possible to have two traits that both define a method named `print`, and
+is our `Temperature` enum implemented both Rust wouldn't know which `print`
+method we inteded with `use`ing it first.
 
 ### Trait Bounds
 
-Defining traits with methods and implementing the trait methods on a particular
-type gives Rust more information than just defining methods on a type directly.
-The information Rust gets is that the type that implements the trait can be
-used in places where the code specifies that it needs some type that implements
-a trait. To illustrate this, Listing 10-7 has a `print_anything` function
-definition. This is similar to the `show_anything` function from Listing 10-4,
-but this function has a *trait bound* on the generic type `T` and uses the
-`print` function from the trait. A trait bound constrains the generic type to
-be any type that implements the trait specified, instead of any type at all.
-With the trait bound, we're then allowed to use the trait method `print` in the
-function body:
+This technique---defining traits with methods and implementing the trait methods
+on a particular type---gives Rust more information than just defining methods
+on a type directly. We are telling Rust that the type that implements the trait
+can be used in places where the code specifies that it needs some type that
+implements
 
-<figure>
-<span class="filename">Filename: src/lib.rs</figure>
+<!--I am again finding this hard to follow, this line above is quite
+circuitous! Any way to slow it down, map it out? Are we saying:
+
+We are telling Rust that where we use the type that implements the trait in our
+code, that type must have the specific functionality defined by the trait---so
+if any type that doesn't have that functionality is used the program will not
+compile.
+
+? So by applying a trait bound, we are saying: " any type T must be a value
+that is printable"? What values would that exclude?
+ -->
+
+a trait. To illustrate this, try out Listing 10-6, which has a `print_anything`
+function definition similar to the `show_anything` function from Listing 10-3,
+but this time it has a *trait bound* on the generic type `T` and uses the
+`print` function from the trait. A trait bound constrains the generic type so
+that is can only be a type that implements the trait specified, and not just
+any type. With the trait bound, we're then allowed to use the trait method
+`print` in the function body:
+
+<!-- So when we used this before it failed because we didn't use a trait bound,
+is that right? But why did that cause it to fail previously? I'm not clear on
+that. What are the specific situations where trait bounds are required? -->
+
+Filename: src/lib.rs
 
 ```rust
-# trait Printable {
-#     fn print(&self);
-# }
-#
 fn print_anything<T: Printable>(value: T) {
     println!("I have something to print for you!");
     value.print();
 }
 ```
 
-<figcaption>
-
-Listing 10-7: A `print_anything` function that uses the trait bound `Printable`
+Listing 10-6: A `print_anything` function that uses the trait bound `Printable`
 on type `T`
 
-</figcaption>
-</figure>
-
-Trait bounds are specified in the type name declarations within the angle
-brackets. After the name of the type that you want to apply the bound to, add a
-colon (`:`) and then specify the name of the trait. This function now specifies
-that it takes a `value` parameter that can be of any type, as long as that type
+You specify a trait bound within angle brackets in the type name declaration.
+After the name of the type that you want to apply the bound to, you add a colon
+(`:`) and then give the name of the trait. This function now specifies that it
+takes a `value` parameter that can be of any type, as long as that type
 implements the trait `Printable`. We need to specify the `Printable` trait in
-the type name declarations because we want to be able to call the `print`
-method that is part of the `Printable` trait.
+the type name declaration to be able to call the `print` method that is part of
+the trait.
 
-Now we are able to call the `print_anything` function from Listing 10-7 and
-pass it a `Temperature` instance as the `value` parameter, since we implemented
-the trait `Printable` on `Temperature` in Listing 10-6:
+Now we are able to call the `print_anything` function from Listing 10-6 and,
+since we implemented the trait `Printable` on `Temperature` in Listing 10-5,
+pass it a `Temperature` instance as the `value` parameter:
 
-<span class="filename">Filename: src/main.rs</span>
+Filename: src/main.rs
 
 ```rust
-# trait Printable {
-#     fn print(&self);
-# }
-#
-# enum Temperature {
-#     Celsius(i32),
-#     Fahrenheit(i32),
-# }
-#
-# impl Printable for Temperature {
-#    fn print(&self) {
-#        match *self {
-#             Temperature::Celsius(val) => println!("{}°C", val),
-#             Temperature::Fahrenheit(val) => println!("{}°F", val),
-#         }
-#     }
-# }
-#
-# fn print_anything<T: Printable>(value: T) {
-#     println!("I have something to print for you!");
-#     value.print();
-# }
-#
 fn main() {
     let temperature = Temperature::Fahrenheit(98);
     print_anything(temperature);
@@ -197,11 +184,11 @@ fn main() {
 ```
 
 If we implement the `Printable` trait on other types, we can use them with the
-`print_anything` method too. If we try to call `print_anything` with an `i32`,
-which does *not* implement the `Printable` trait, we get a compile-time error
-that looks like this:
+`print_anything` method too. However, if we try to call `print_anything` with
+an `i32`, which does *not* implement the `Printable` trait, we get a
+compile-time error that looks like this:
 
-```text
+```bash
 error[E0277]: the trait bound `{integer}: Printable` is not satisfied
    |
 29 | print_anything(3);
@@ -215,16 +202,18 @@ error[E0277]: the trait bound `{integer}: Printable` is not satisfied
 Traits are an extremely useful feature of Rust. You'll almost never see generic
 functions without an accompanying trait bound. There are many traits in the
 standard library, and they're used for many, many different things. For
-example, our `Printable` trait is similar to one of those traits, `Display`.
-And in fact, that's how `println!` decides how to format things with `{}`. The
-`Display` trait has a `fmt` method that determines how to format something.
+example, our `Printable` trait is similar tothe standard trait `Display`, which
+is in fact how `println!` decides how to format things with `{}`. The `Display`
+trait has a `fmt` method that determines how to format something.
 
-Listing 10-8 shows our original example from Listing 10-3, but this time using
-the standard library's `Display` trait in the trait bound on the generic type
-in the `show_anything` function:
+<!-- Didn't we discuss the display trait in an earlier chapter, when something
+wasn't compiling because we hadn't called it? I can't remember which one, but
+it would be useful to cross-ref that here -->
 
-<figure>
-<span class="filename">Filename: src/lib.rs</span>
+Listing 10-7 shows our original example from Listing 10-3, this time using the
+standard library's `Display` trait in the trait bound on the generic type:
+
+Filename: src/lib.rs
 
 ```rust
 use std::fmt::Display;
@@ -235,48 +224,63 @@ fn show_anything<T: Display>(value: T) {
 }
 ```
 
-<figcaption>
-
-Listing 10-8: The `show_anything` function with trait bounds
-
-</figcaption>
-</figure>
+Listing 10-7: The `show_anything` function with trait bounds
 
 Now that this function specifies that `T` can be any type as long as that type
 implements the `Display` trait, this code will compile.
 
-### Multiple Trait Bounds and `where` Syntax
+<!-- I wonder if it would simplify this section to use this show_anything
+example throughout, rather than print_anything, to explain traits and trait
+bounds? -->
 
-Each generic type can have its own trait bounds. The signature for a function
-that takes a type `T` that implements `Display` and a type `U` that implements
-`Printable` looks like:
+### Multiple Trait Bounds
+
+Each generic type can have its own trait bound. If we wanted to create a
+function with two generics, 'T' and 'U', and give each generic its own trait
+bound, `Display` and `Printable` respectively, the signature would look like
+this:
 
 ```rust,ignore
 fn some_function<T: Display, U: Printable>(value: T, other_value: U) {
 ```
 
-To specify multiple trait bounds on one type, list the trait bounds in a list
-with a `+` between each trait. For example, here's the signature of a function
-that takes a type `T` that implements `Display` and `Clone` (which is another
-standard library trait we have mentioned):
+As you might expect!
+
+You can also specify multiple trait bounds on one type, by listing the trait
+bounds in a list with a `+` between each trait. For example, here's the
+signature of a function that takes a type `T` that implements both `Display`
+and `Clone` ( another standard library trait we mentioned in Chapter XX):
 
 ```rust,ignore
 fn some_function<T: Display + Clone>(value: T) {
 ```
 
-When trait bounds start getting complicated, there is another syntax that's a
-bit cleaner: `where`. And in fact, the error we got when we ran the code from
-Listing 10-3 referred to it:
+<!-- does this mean the type must satisfy both bounds, so it's AND rather than
+OR? -->
 
-```text
+#### Organizing Multiple Trait Bounds with where
+
+When trait bounds start getting complicated, the `where` syntax can help you
+make your code a bit cleaner. The `where` syntax allows you to move the trait
+bounds to after the function arguments list, so it doesn't clutter up your
+function.
+
+<!-- How does that help clean it up? Is this right, it just de-clutters? -->
+
+And in fact, the error we got when we ran the code from Listing 10-3 referred
+to it:
+
+```bash
 help: consider adding a `where T: std::fmt::Display` bound
 ```
 
-The `where` syntax moves the trait bounds after the function parameters list.
-This definition of `show_anything` means the exact same thing as the definition
-in Listing 10-8, just said a different way:
+<!-- So why does where create an error, if it's just for cleaning up code? -->
 
-<span class="filename">Filename: src/lib.rs</span>
+The definition of `show_anything` in Listing 10-X means the exact same thing as
+the definition in Listing 10-7, but we've used `where` to move the trait bound
+to the end of the `fn` line:
+
+Filename: src/lib.rs
 
 ```rust
 use std::fmt::Display;
@@ -287,11 +291,15 @@ fn show_anything<T>(value: T) where T: Display {
 }
 ```
 
-Instead of `T: Display` going inside the angle brackets, they go after the
-`where` keyword at the end of the function signature. This can make complex
-signatures easier to read. The `where` clause and its parts can also go on new
-lines. Here's the signature of a function that takes three generic type
-parameters that each have multiple trait bounds:
+Listing 10-X: A tidier function with `where`
+
+Instead of the `T: Display` trait bound going inside the angle brackets, it's
+moved to the end of the function signature. This can make complex signatures
+easier to read.
+
+You can also place a `where` clause and its parts on a new line. Here's the
+signature of a function that takes three generic type parameters that each have
+the same two bounds:
 
 ```rust,ignore
 fn some_function<T, U, V>(t: T, u: U, v: V)
@@ -301,6 +309,12 @@ fn some_function<T, U, V>(t: T, u: U, v: V)
 {
 ```
 
-Generic type parameters and trait bounds are part of Rust's rich type system.
-Another important kind of generic in Rust interacts with Rust's ownership and
+This makes is very clear that each generic type has two traits. Generic type
+parameters and trait bounds are part of Rust's rich type system.
+
+<!-- To wrap this up, can you summarize what trait bounds bring to Rust -- is
+this a safety measure, for example, to prevent a program compiling with
+incompatible data? -->
+
+A final important kind of generic interacts with Rust's ownership and
 references features, and they're called *lifetimes*.
