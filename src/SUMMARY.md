@@ -35,7 +35,7 @@
     - [Controlling Visibility with `pub`](ch07-02-controlling-visibility-with-pub.md)
     - [Importing Names with `use`](ch07-03-importing-names-with-use.md)
 
-- [Fundamental Collections](ch08-00-fundamental-collections.md)
+- [Common Collections](ch08-00-common-collections.md)
     - [Vectors](ch08-01-vectors.md)
     - [Strings](ch08-02-strings.md)
     - [Hash Maps](ch08-03-hash-maps.md)
@@ -45,10 +45,10 @@
     - [Recoverable Errors with `Result`](ch09-02-recoverable-errors-with-result.md)
     - [To `panic!` or Not To `panic!`](ch09-03-to-panic-or-not-to-panic.md)
 
-- [Generics](ch10-00-generics.md)
-    - [Syntax](ch10-01-syntax.md)
-    - [Traits](ch10-02-traits.md) - NEED DEFAULT METHOD IMPLEMENTATIONS
-    - [Lifetime syntax](ch10-03-lifetime-syntax.md)
+- [Generic Types, Traits, and Lifetimes](ch10-00-generics.md)
+    - [Generic Data Types](ch10-01-syntax.md)
+    - [Traits: Defining Shared Behavior](ch10-02-traits.md)
+    - [Validating References with Lifetimes](ch10-03-lifetime-syntax.md)
 
 - [Testing](ch11-00-testing.md)
     - [Writing tests](ch11-01-writing-tests.md)
