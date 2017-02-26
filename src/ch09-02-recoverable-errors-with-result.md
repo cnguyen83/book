@@ -435,7 +435,7 @@ we defined in Listing 9-5. The part of the `match` that requires a return type
 of `Result` is `return Err(e)`, so the return type of the function must be a
 `Result` to be compatible with this `return`.
 
-Let’s look at what happens if use `?` in the `main` function, which you’ll
+Let’s look at what happens if we use `?` in the `main` function, which you’ll
 recall has a return type of `()`:
 
 ```rust,ignore
@@ -450,7 +450,6 @@ fn main() {
 that doesn't return a result is STILL confusing. Since we want to only explain
 `?` now, I've changed the example, but if you try running this code you WON'T
 get the error message below.
-
 I'm bugging people to try and get
 https://github.com/rust-lang/rust/issues/35946 fixed soon, hopefully before this
 chapter gets through copy editing-- at that point I'll make sure to update this
