@@ -34,8 +34,8 @@ advantage of the safety and easy concurrency that Rust offers. However, you
 still have the option to make your variables mutable. Let’s explore how and why
 Rust encourages you to favor immutability, and why you might want to opt out.
 
-When a variable is immutable, that means mean once a value is bound to a name,
-you can’t change that value. To illustrate, let’s generate a new project called
+When a variable is immutable, that means once a value is bound to a name, you
+can’t change that value. To illustrate, let’s generate a new project called
 *variables* in your *projects* directory by using `cargo new --bin variables`.
 
 Then, in your new *variables* directory, open *src/main.rs* and replace its
@@ -55,9 +55,7 @@ fn main() {
 Save and run the program using `cargo run`. You should receive an error
 message, as shown in this output:
 
-```bash
-$ cargo run
-   Compiling variables v0.0.1 (file:///projects/variables)
+```
 error[E0384]: re-assignment of immutable variable `x`
  --> src/main.rs:4:5
   |
@@ -126,44 +124,51 @@ variables.
 There are multiple trade-offs to consider, in addition to the prevention of
 bugs. For example, in cases where you’re using large data structures, mutating
 an instance in place may be faster than copying and returning newly allocated
-instances. With smaller data structures, always creating new instances and
-writing in a more functional programming style may be easier to reason about,
-so the lower performance penalty might be worth it to gain that clarity.
+instances. With smaller data structures, creating new instances and writing in
+a more functional programming style may be easier to reason about, so the lower
+performance might be a worthwhile penalty for gaining that clarity.
 
 ### Differences Between Variables and Constants
 
-Not being able to change the value of a variable might have reminded you of
-another programming concept that most languages have: *constants*. Constants
-are also values bound to a name that are not allowed to change, but there are a
-few differences between constants and variables. First, using `mut` with
-constants is not allowed: constants aren't only immutable by default, they're
-always immutable. Constants are declared using the `const` keyword instead of
-the `let` keyword, and the type of the value *must* be annotated. We're about
-to cover types and type annotations in the next section, “Data Types,” so don't
-worry about the details right now. Constants can be declared in any scope,
-including the global scope, which makes them useful for a value that many parts
-of your code need to know about. The last difference is that constants may only
-be set to a constant expression, not the result of a function call or any other
-value that could only be used at runtime.
+Being unable to change the value of a variable might have reminded you of
+another programming concept that most other languages have: *constants*. Like
+immutable variables, constants are also values  that are bound to a name and
+are not allowed to change, but there are a few differences between constants
+and variables.
+
+First, we aren’t allowed to use `mut` with constants: constants aren't only
+immutable by default, they're always immutable.
+
+We declare constants using the `const` keyword instead of the `let` keyword,
+and the type of the value *must* be annotated. We're about to cover types and
+type annotations in the next section, “Data Types,” so don't worry about the
+details right now, just know that we must always annotate the type.
+
+Constants can be declared in any scope, including the global scope, which makes
+them useful for values that many parts of code need to know about.
+
+The last difference is that constants may only be set to a constant expression,
+not the result of a function call or any other value that could only be
+computed at runtime.
 
 Here's an example of a constant declaration where the constant's name is
-`MAX_POINTS` and its value is set to 100,000. Rust constant naming convention
-is to use all upper case with underscores between words:
+`MAX_POINTS` and its value is set to 100,000. (Rust constant naming convention
+is to use all upper case with underscores between words):
 
 ```
 const MAX_POINTS: u32 = 100_000;
 ```
 
-Constants are valid for the entire lifetime of a program, within the scope they
-were declared in. That makes constants useful for values in your application
+Constants are valid for the entire time a program runs, within the scope they
+were declared in, making them a useful choice for values in your application
 domain that multiple part of the program might need to know about, such as the
-maximum number of points any player of a game is allowed to earn or the number
-of seconds in a year.
+maximum number of points any player of a game is allowed to earn or the speed
+of light.
 
-Documenting hardcoded values used throughout your program by naming them as
-constants is useful to convey the meaning of that value to future maintainers
-of the code. It also helps to have only one place in your code that you would
-need to change if the hardcoded value needed to be updated in the future.
+Naming hardcoded values used throughout your program as constants is useful in
+conveying the meaning of that value to future maintainers of the code. It also
+helps to have only one place in your code you would need to change if the
+hardcoded value needed to be updated in the future.
 
 ### Shadowing
 
@@ -240,7 +245,7 @@ error[E0308]: mismatched types
   |              ^^^^^^^^^^^^ expected &str, found usize
   |
   = note: expected type `&str`
-  = note:    found type `usize`
+             found type `usize`
 ```
 
 Now that we’ve explored how variables work, let’s look at more data types they
@@ -260,8 +265,8 @@ value and how we use it. In cases when many types are possible, such as when we
 converted a `String` to a numeric type using `parse` in Chapter 2, we must add
 a type annotation, like this:
 
-```rust
-let guess: u32 = "42".parse().unwrap();
+```
+let guess: u32 = "42".parse().expect("Not a number!");
 ```
 
 If we don’t add the type annotation here, Rust will display the following
@@ -270,10 +275,10 @@ possible type we want to use:
 
 ```bash
 error[E0282]: unable to infer enough type information about `_`
- --> src/main.rs:2:5
+ --> src/main.rs:2:9
   |
-2 | let guess = "42".parse().unwrap();
-  |     ^^^^^ cannot infer type for `_`
+2 |     let guess = "42".parse().expect("Not a number!");
+  |         ^^^^^ cannot infer type for `_`
   |
   = note: type annotations or generic parameter binding required
 ```
@@ -292,9 +297,10 @@ work in Rust.
 An *integer* is a number without a fractional component. We used one integer
 type earlier in this chapter, the `i32` type. This type declaration indicates
 that the value it’s associated with should be a signed integer (hence the `i`,
-as opposed to a `u` for unsigned) for a 32-bit system. Table 3-1 shows the
-built-in integer types in Rust. Each variant in the Signed and Unsigned columns
-(for example, *i32*) can be used to declare the type of an integer value.
+as opposed to a `u` for unsigned) that takes up 32 bits of space. Table 3-1
+shows the built-in integer types in Rust. Each variant in the Signed and
+Unsigned columns (for example, *i32*) can be used to declare the type of an
+integer value.
 
 <caption>
 Table 3-1: Integer Types in Rust
@@ -319,11 +325,11 @@ Signed numbers are stored using two’s complement representation (if you’re
 unsure what this is, you can search for it online; an explanation is outside
 the scope of this book).
 
-Each signed variant can store numbers from -(2<sup>n - 1</sup>) to 2<sup>n -
-1</sup> - 1 inclusive, where `n` is the number of bits that variant uses. So an
-`i8` can store numbers from -(2<sup>7</sup>) to 2<sup>7</sup>, which equals
--128 to 127. Unsigned variants can store numbers from 0 to 2<sup>n</sup> - 1,
-so a `u8` can store numbers from 0 to 2<sup>8</sup> - 1, which equals 0 to 255.
+Each signed variant can store numbers from -(2n - 1) to 2n -  1 - 1 inclusive,
+where `n` is the number of bits that variant uses. So an `i8` can store numbers
+from -(27) to 27  - 1, which equals -128 to 127. Unsigned variants can store
+numbers from 0 to 2n - 1, so a `u8` can store numbers from 0 to 28 - 1, which
+equals 0 to 255.
 
 Additionally, the `isize` and `usize` types depend on the kind of computer your
 program is running on: 64-bits if you’re on a 64-bit architecture and 32-bits
@@ -586,8 +592,9 @@ Filename: src/main.rs
 ```rust,ignore
 fn main() {
     let a = [1, 2, 3, 4, 5];
+    let index = 10;
 
-    let element = a[10];
+    let element = a[index];
 
     println!("The value of element is: {}", element);
 }
@@ -600,9 +607,8 @@ $ cargo run
    Compiling arrays v0.1.0 (file:///projects/arrays)
      Running `target/debug/arrays`
 thread '<main>' panicked at 'index out of bounds: the len is 5 but the index is
- 10', src/main.rs:4
+ 10', src/main.rs:6
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
-error: Process didn't exit successfully: `target/debug/arrays` (exit code: 101)
 ```
 
 The compilation didn’t produce any errors, but the program results in a
@@ -669,10 +675,18 @@ The lines execute in the order in which they appear in the `main` function.
 First, the “Hello, world!” message prints, and then `another_function` is
 called and its message is printed.
 
-### Function Arguments
+### Function Parameters
 
-Functions can also take arguments. The following rewritten version of
-`another_function` shows what arguments look like in Rust:
+Functions can also be defined to have *parameters*, which are special variables
+that are part of a function's signature. When a function has parameters, we can
+provide it with concrete values for those parameters. Technically, the concrete
+values are called *arguments*, but in casual conversation people tend to use
+the words “parameter” and “argument” interchangeably for either the variables
+in a function's definition or the concrete values passed in when you call a
+function.
+
+The following rewritten version of `another_function` shows what parameters
+look like in Rust:
 
 Filename: src/main.rs
 
@@ -695,18 +709,18 @@ $ cargo run
 The value of x is: 5
 ```
 
-The declaration of `another_function` has one argument named `x`. The type of
+The declaration of `another_function` has one parameter named `x`. The type of
 `x` is specified as `i32`. When `5` is passed to `another_function`, the
 `println!` macro puts `5` where the pair of curly braces were in the format
 string.
 
-In function signatures, you *must* declare the type. This is a deliberate
-decision in Rust’s design: requiring type annotations in function definitions
-means the compiler almost never needs you to use them elsewhere in the code to
-figure out what you mean.
+In function signatures, you *must* declare the type of each parameter. This is
+a deliberate decision in Rust’s design: requiring type annotations in function
+definitions means the compiler almost never needs you to use them elsewhere in
+the code to figure out what you mean.
 
-When you want a function to have multiple arguments, separate them inside the
-function signature with commas, like this:
+When you want a function to have multiple parameters, separate the parameter
+declarations with commas, like this:
 
 Filename: src/main.rs
 
@@ -721,10 +735,10 @@ fn another_function(x: i32, y: i32) {
 }
 ```
 
-This example creates a function with two arguments, both of which are `i32`
-types. If your function has multiple arguments, the arguments don’t need to be
-the same type, but they just happen to be in this example. The function then
-prints out the values of both of its arguments.
+This example creates a function with two parameters, both of which are `i32`
+types. The function then prints out the values in both of its parameters. Note
+that function parameters don't all need to be the same type, they just happen
+to be in this example.
 
 Let’s try running this code. Replace the program currently in your *function*
 project’s *src/main.rs* file with the preceding example, and run it using
@@ -738,8 +752,8 @@ The value of x is: 5
 The value of y is: 6
 ```
 
-Because `5` is passed as the `x` argument and `6` is passed as the `y`
-argument, the two strings are printed with these values.
+Because we called the function with `5` as the value for  `x` and `6` is passed
+as the value for `y`, the two strings are printed with these values.
 
 ### Function Bodies
 
@@ -889,7 +903,7 @@ that line is the same as the following:
 let x = 5;
 ```
 
-Second, the `five` function requires no arguments and defines the type of the
+Second, the `five` function has no parameters and defines the type of the
 return value, but the body of the function is a lonely `5` with no semicolon
 because it’s an expression whose value we want to return. Let’s look at another
 example:
@@ -928,13 +942,18 @@ fn plus_one(x: i32) -> i32 {
 
 Running this code produces an error, as follows:
 
-```bash
-error[E0269]: not all control paths return a value
- --> src/main.rs:7:1
+```
+error[E0308]: mismatched types
+ --> src/main.rs:7:28
   |
-7 | fn plus_one(x: i32) -> i32 {
-  | ^
+7 |   fn plus_one(x: i32) -> i32 {
+  |  ____________________________^ starting here...
+8 | |     x + 1;
+9 | | }
+  | |_^ ...ending here: expected i32, found ()
   |
+  = note: expected type `i32`
+             found type `()`
 help: consider removing this semicolon:
  --> src/main.rs:8:10
   |
@@ -942,12 +961,13 @@ help: consider removing this semicolon:
   |          ^
 ```
 
-The main error message, “not all control paths return a value,” reveals the
-core issue with this code. The definition of the function `plus_one` says that
-it will return an `i32`, but statements don’t evaluate to a value. Therefore,
-nothing is returned, which contradicts the function definition and results in
-an error. In this output, Rust provides a message to possibly help rectify this
-issue: it suggests removing the semicolon, which would fix the error.
+The main error message, “mismatched types,” reveals the core issue with this
+code. The definition of the function `plus_one` says that it will return an
+`i32`, but statements don’t evaluate to a value, which is expressed by `()`,
+the empty tuple. Therefore, nothing is returned, which contradicts the function
+definition and results in an error. In this output, Rust provides a message to
+possibly help rectify this issue: it suggests removing the semicolon, which
+would fix the error.
 
 ## Comments
 
@@ -1084,8 +1104,7 @@ fn main() {
 The `if` condition evaluates to a value of `3` this time, and Rust throws an
 error:
 
-```bash
-   Compiling branches v0.1.0 (file:///projects/branches)
+```
 error[E0308]: mismatched types
  --> src/main.rs:4:8
   |
@@ -1093,10 +1112,7 @@ error[E0308]: mismatched types
   |        ^^^^^^ expected bool, found integral variable
   |
   = note: expected type `bool`
-  = note:    found type `{integer}`
-
-error: aborting due to previous error
-Could not compile `branches`.
+             found type `{integer}`
 ```
 
 The error indicates that Rust expected a `bool` but got an integer. Rust will
@@ -1222,20 +1238,24 @@ fn main() {
 }
 ```
 
-When we run this code, we’ll get an error. The `if` and `else` arms have value
-types that are incompatible, and Rust indicates exactly where to find the
+When we try to run this code, we’ll get an error. The `if` and `else` arms have
+value types that are incompatible, and Rust indicates exactly where to find the
 problem in the program:
 
-```bash
-   Compiling branches v0.1.0 (file:///projects/branches)
+```
 error[E0308]: if and else have incompatible types
  --> src/main.rs:4:18
   |
-4 |     let number = if condition {
-  |                  ^ expected integral variable, found reference
+4 |       let number = if condition {
+  |  __________________^ starting here...
+5 | |         5
+6 | |     } else {
+7 | |         "six"
+8 | |     };
+  | |_____^ ...ending here: expected integral variable, found reference
   |
   = note: expected type `{integer}`
-  = note:    found type `&’static str`
+             found type `&'static str`
 ```
 
 The expression in the `if` block evaluates to an integer, and the expression in
@@ -1373,13 +1393,13 @@ the value is: 50
 ```
 
 All five array values appear in the terminal, as expected. Even though `index`
-will reach a value of `6` at some point, the loop stops executing before trying
+will reach a value of `5` at some point, the loop stops executing before trying
 to fetch a sixth value from the array.
 
 But this approach is error prone; we could cause the program to panic if the
-index length is incorrect. It’s also slow, because the compiler needs to
-perform the conditional check on every element on every iteration through the
-loop.
+index length is incorrect. It’s also slow, because the compiler adds runtime
+code to perform the conditional check on every element on every iteration
+through the loop.
 
 As a more efficient alternative, you can use a `for` loop and execute some code
 for each item in a collection. A `for` loop looks like this:

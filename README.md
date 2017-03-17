@@ -18,7 +18,7 @@ Building the book requires [mdBook] >= v0.0.13. To get it:
 
 [mdBook]: https://github.com/azerupi/mdBook
 
-```
+```bash
 $ cargo install mdbook
 ```
 
@@ -27,7 +27,7 @@ $ cargo install mdbook
 To build the book, first `cd` into either the `first-edition` or `second-edition` directory
 depending on which edition of the book you would like to build. Then type:
 
-```
+```bash
 $ mdbook build
 ```
 
@@ -35,20 +35,24 @@ The output will be in the `book` subdirectory. To check it out, open it in
 your web browser.
 
 _Firefox:_
-```
-$ firefox book/index.html           # Linux
-$ open -a "Firefox" book/index.html # OS X
+```bash
+$ firefox book/index.html                       # Linux
+$ open -a "Firefox" book/index.html             # OS X
+$ Start-Process "firefox.exe" .\book\index.html # Windows (PowerShell)
+$ start firefox.exe .\book\index.html           # Windows (Cmd)
 ```
 
 _Chrome:_
-```
-$ google-chrome book/index.html           # Linux
-$ open -a "Google Chrome" book/index.html # OS X
+```bash
+$ google-chrome book/index.html                 # Linux
+$ open -a "Google Chrome" book/index.html       # OS X
+$ Start-Process "chrome.exe" .\book\index.html  # Windows (PowerShell)
+$ start chrome.exe .\book\index.html            # Windows (Cmd)
 ```
 
 To run the tests:
 
-```
+```bash
 $ mdbook test
 ```
 
@@ -97,7 +101,7 @@ We're using [Graphviz](http://graphviz.org/) for some of the diagrams in the
 book. The source for those files live in the `dot` directory. To turn a `dot`
 file, for example, `dot/trpl04-01.dot` into an `svg`, run:
 
-```
+```bash
 $ dot dot/trpl04-01.dot -Tsvg > src/img/trpl04-01.svg
 ```
 
