@@ -94,35 +94,39 @@ we hadn't implemented the `Deref` trait for `Mp3`, Rust wouldn't compile the
 code `*my_favorite_song`: we'd get an error saying type `Mp3` cannot be
 dereferenced.
 
-The reason this code works is that what the `*` operator is doing behind
-the scenes when we call `*my_favorite_song` is:
+Without the `Deref` trait, the compiler can only dereference `&` references,
+which `my_favorite_song` is not (it is an `Mp3` struct). With the `Deref`
+trait, the compiler knows that types implementing the `Deref` trait have a
+`deref` method that returns a reference (in this case, `&self.audio` because of
+our definition of `deref` in Listing 15-7). So in order to get a `&` reference
+that `*` can dereference, the compiler expands `*my_favorite_song` to this:
 
 ```rust,ignore
 *(my_favorite_song.deref())
 ```
 
-This calls the `deref` method on `my_favorite_song`, which borrows
-`my_favorite_song` and returns a reference to `my_favorite_song.audio`, since
-that's what we defined `deref` to do in Listing 15-7. `*` on references is
-defined to just follow the reference and return the data, so the expansion of
-`*` doesn't recurse for the outer `*`. So we end up with data of type
-`Vec<u8>`, which matches the `vec![1, 2, 3]` in the `assert_eq!` in Listing
-15-7.
+The result is the value in `self.audio`. The reason `deref` returns a reference
+that we then have to dereference, rather than just returning a value directly,
+is because of ownership: if the `deref` method directly returned the value
+instead of a reference to it, the value would be moved out of `self`. We don't
+want to take ownership of `my_favorite_song.audio` in this case and most cases
+where we use the dereference operator.
 
-The reason that the return type of the `deref` method is still a reference and
-why it's necessary to dereference the result of the method is that if the
-`deref` method returned just the value, using `*` would always take ownership.
+Note that replacing `*` with a call to the `deref` method and then a call to
+`*` happens once, each time the `*` is used. The substitution of `*` does not
+recurse infinitely. That's how we end up with data of type `Vec<u8>`, which
+matches the `vec![1, 2, 3]` in the `assert_eq!` in Listing 15-7.
 
 ### Implicit Deref Coercions with Functions and Methods
 
 Rust tends to favor explicitness over implicitness, but one case where this
 does not hold true is *deref coercions* of arguments to functions and methods.
-A deref coercion will automatically convert a reference to a pointer or a smart
-pointer into a reference to that pointer's contents. A deref coercion happens
-when the type of the argument passed into the function differs from the type
-of the parameter defined in that function's signature. Deref coercion was added
-to Rust to make calling functions and methods not need as many explicit references
-and dereferences with `&` and `*`.
+A deref coercion will automatically convert a reference to any pointer into a
+reference to that pointer's contents. A deref coercion happens when the
+reference type of the argument passed into the function differs from the
+reference type of the parameter defined in that function's signature. Deref
+coercion was added to Rust to make calling functions and methods not need as
+many explicit references and dereferences with `&` and `*`.
 
 Using our `Mp3` struct from Listing 15-7, here's the signature of a function to
 compress mp3 audio data that takes a slice of `u8`:
