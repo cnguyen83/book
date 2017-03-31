@@ -12,6 +12,7 @@ Amir
 APIs
 aren
 args
+AveragedCollection
 backtrace
 backtraces
 BACKTRACE
@@ -77,6 +78,7 @@ Dobrý
 doccargo
 doccratesio
 doesn
+DraftPost
 ebooks
 Edsger
 else's
@@ -112,6 +114,7 @@ hardcoding
 hasher
 hashers
 HashMap
+HashSet
 Haskell
 hasn
 helloworld
@@ -126,6 +129,7 @@ impl
 ImportantExcerpt
 indices
 init
+inline
 instantiation
 internet
 IntoIterator
@@ -147,11 +151,13 @@ latin
 libc
 libcollections
 libcore
+libpanic
 librarys
 libreoffice
 libstd
 lifecycle
 login
+lookup
 loopback
 lval
 mathematic
@@ -200,6 +206,8 @@ parameterize
 ParseIntError
 PartialEq
 PartialOrd
+PendingReview
+PendingReviewPost
 portia
 powi
 preprocessing
@@ -231,13 +239,17 @@ runtime
 runtimes
 Rustacean
 Rustaceans
+rUsT
 rustc
 rustdoc
 rustup
+searchstring
 SecondaryColor
+SelectBox
 semver
 SemVer
 shouldn
+Simula
 sizeof
 someproject
 someusername
@@ -271,14 +283,17 @@ subtree
 subtyping
 Summarizable
 Supertraits
-That'd
 test's
+TextField
+That'd
 threadsafe
+timestamp
 Tiếng
 timeline
 TODO
 toml
 TOML
+ToString
 tradeoff
 tradeoffs
 TrafficLight
@@ -293,6 +308,7 @@ uncomment
 Uncomment
 Uninstalling
 uninstall
+unix
 unoptimized
 UnsafeCell
 unsized
@@ -313,6 +329,7 @@ WeatherForecast
 WebSocket
 whitespace
 wildcards
+workflow
 workspace
 workspaces
 Workspaces
