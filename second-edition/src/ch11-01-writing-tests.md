@@ -80,7 +80,7 @@ Listing 11-2:
 ```text
 $ cargo test
    Compiling adder v0.1.0 (file:///projects/adder)
-    Finished debug [unoptimized + debuginfo] target(s) in 0.22 secs
+    Finished dev [unoptimized + debuginfo] target(s) in 0.22 secs
      Running target/debug/deps/adder-ce99bcc2479f4607
 
 running 1 test
@@ -633,7 +633,7 @@ impl Guess {
         }
 
         Guess {
-            value: value,
+            value
         }
     }
 }
@@ -679,7 +679,7 @@ impl Guess {
         }
 
         Guess {
-            value: value,
+            value
         }
     }
 }
@@ -731,7 +731,7 @@ impl Guess {
         }
 
         Guess {
-            value: value,
+            value
         }
     }
 }
